@@ -11,33 +11,14 @@ class Profil(BaseModel):
     first_name:str
     last_name:str
     phone:str
+    location:str
     email:str | None = None
     skills : list[str] = []
-    _jsontext : str
-
-    def __init__(self, cv_text:str):
-        reponse = completion(
-                model="gemini/gemini-3.1-flash-lite",
-                messages=[
-                  {
-                    "role":"system",
-                    "content": "Extract moi depuis ce cv un json first_name, last_name,phone,email,skills\n Ta reponse doit etre formatté en JSON directement"
-                  },
-                  {
-                      "role":"user",
-                      "content":cv_text
-                  }
-                ]
-            )
-        self._jsontext = reponse.choices[0].message.content
-        print(reponse.choices[0].message.content)
-
-    def get_data(self):
-        return self._jsontext
 
 
 
-def build_profile(cv_text: str) -> Profil:
+
+def build_profile(cv_text: str) -> Profil | None:
     """Envoie le texte du CV au LLM et retourne sa réponse sous forme de dict.
     
     TODO (étudiant) :
@@ -46,10 +27,22 @@ def build_profile(cv_text: str) -> Profil:
     - appeler le modèle via `litellm.completion` ;
     - parser la réponse JSON (gérer une réponse mal formée).
     """
-    profil = Profil.model_dump_json()
+    schema = str(Profil.model_json_schema())
+    reponse = completion(
+            model="gemini/gemini-3.1-flash-lite",
+            messages=[
+              {
+                "role":"system",
+                "content": f"Extract moi depuis ce cv un json avec ce model {schema}\n Ta reponse doit etre formatté directement"
+              },
+              {
+                  "role":"user",
+                  "content":cv_text
+              }
+            ]
+        )
+    return  Profil.model_validate_json(reponse.choices[0].message.content)
 
-
-    return profil
 
 
 def validate_profile(raw: dict):
