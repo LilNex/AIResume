@@ -3,3 +3,5 @@ pymupdf
 litellm
 pydantic
 python-dotenv
+pymupdf4llm
+google-cloud-aiplatform

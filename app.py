@@ -1,9 +1,11 @@
 """Interface Streamlit d'AI_TalentMatcher (interface uniquement, sans logique métier)."""
 
 import streamlit as st
-
+import core.extraction as ex
+import core.profile as profiler
+from dotenv import load_dotenv
+load_dotenv()
 st.set_page_config(page_title="AI TalentMatcher", page_icon="📄", layout="wide")
-
 if "uploaded_cvs" not in st.session_state:
     st.session_state.uploaded_cvs = {}  # nom de fichier -> octets du PDF
 if "profiles" not in st.session_state:
@@ -14,8 +16,7 @@ if "matches" not in st.session_state:
 st.title("AI TalentMatcher")
 
 # --- 1. Upload des CV -------------------------------------------------------
-st.header("1. CV des candidats")
-
+st.header(f"1. CV des candidats")
 files = st.file_uploader(
     "Déposer un ou plusieurs CV (PDF)",
     type=["pdf"],
@@ -30,8 +31,12 @@ if st.session_state.uploaded_cvs:
         st.write(f"- {name} ({len(data) / 1024:.1f} Ko)")
     col1, col2 = st.columns(2)
     if col1.button("Analyser les CV", type="primary"):
-        # TODO (étudiant) : brancher ici extraction PDF -> LLM -> validation.
-        st.info("Analyse non implémentée pour l'instant.")
+        for cv in st.session_state.uploaded_cvs:
+            # TODO (étudiant) : brancher ici extraction PDF -> LLM -> validation.
+            md = ex.extract_text(st.session_state.uploaded_cvs[cv])
+            profile = profiler.build_profile(md)
+            st.info(profile.get_data())
+
     if col2.button("Vider la liste"):
         st.session_state.uploaded_cvs = {}
         st.session_state.profiles = []
