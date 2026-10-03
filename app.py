@@ -37,7 +37,7 @@ if st.session_state.uploaded_cvs:
             md = ex.extract_text(st.session_state.uploaded_cvs[cv])
             profile = profiler.build_profile(md)
             st.session_state.profiles.append(profile)
-            st.info(profile.skills)
+            # st.info(profile.skills)
 
     if col2.button("Vider la liste"):
         st.session_state.uploaded_cvs = {}
@@ -64,7 +64,7 @@ else:
         cols = st.columns(3)
         for i, p in enumerate(profiles):
             with cols[i % 3].container(border=True):
-                st.subheader(f"{p.get('first_name', '')} {p.get('last_name', '')}")
+                st.subheader(f"{p.get('firstName', '')} {p.get('lastName', '')}")
                 st.write(f"📧 {p.get('email', '-')}")
                 st.write(f"📞 {p.get('phone', '-')}")
                 st.write(f"📍 {p.get('location', '-')}")

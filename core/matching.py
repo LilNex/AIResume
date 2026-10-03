@@ -17,15 +17,13 @@ def match_candidates(project_description: str, profiles: list) -> list:
                 messages=[
                   {
                     "role":"system",
-                    "content": f"""Voici les profiles des candidats {profiles}\n
-                      La description du poste est {project_description}\n
-                      Affiche moi les meilleurs candidats pour ce poste"""
+                    "content": f"""Voici les profiles des candidats {profiles}\n\n
+                      Affiche moi les meilleurs candidats pour cette description"""
+                  },
+                  {
+                      "role":"user",
+                      "content": project_description
                   }
-                  # ,
-                  # {
-                  #     "role":"user",
-                  #     "content":cv_text
-                  # }
                 ]
             )
     return reponse.choices[0].message.content

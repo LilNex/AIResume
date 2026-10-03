@@ -8,10 +8,10 @@ from pydantic import BaseModel
     
 
 class Profil(BaseModel):
-    first_name:str
-    last_name:str
-    phone:str
-    location:str
+    firstName:str | None = None
+    lastName:str| None = None
+    phone:str| None = None
+    location:str| None = None
     email:str | None = None
     skills : list[str] = []
 
@@ -30,6 +30,7 @@ def build_profile(cv_text: str) -> Profil | None:
     schema = str(Profil.model_json_schema())
     reponse = completion(
             model="gemini/gemini-3.1-flash-lite",
+            response_format={"type": "json_object"},
             messages=[
               {
                 "role":"system",
